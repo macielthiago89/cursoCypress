@@ -1,8 +1,24 @@
+import { faker } from '@faker-js/faker';
+
 describe('Central de Atendimento ao Cliente TAT', () => {
+
+  let primeiroNome;
+  let ultimoNome;
+  let emailFaker;
+  let feedbackFaker;
+  let telefoneFaker;
+
   beforeEach(() => {
     cy.visit('./src/index.html')
 
     cy.title().should('eq', 'Central de Atendimento ao Cliente TAT')
+
+    primeiroNome = faker.person.firstName();  // Nome
+    ultimoNome = faker.person.lastName();     // Sobrenome
+    emailFaker = faker.internet.email();      // Email
+    feedbackFaker = faker.lorem.sentence();   // Feedback aleatório
+    telefoneFaker = faker.number.int(9)
+
   })
   it('1- Verifica o título da aplicação', () => {
     cy.title().should('eq', 'Central de Atendimento ao Cliente TAT')
@@ -11,65 +27,33 @@ describe('Central de Atendimento ao Cliente TAT', () => {
 
     cy.title().should('eq', 'Central de Atendimento ao Cliente TAT')
 
-    cy.get('#firstName')
-      .should('be.visible')
-      .type('Thiago'),
+    cy.fillMandatoryFieldsAndSubmit(primeiroNome, ultimoNome, emailFaker, feedbackFaker)
 
-      cy.get('#lastName')
-        .should('be.visible')
-        .type('Andrade')
-
-    cy.get('#email')
-      .should('be.visible')
-      .type('thiago@teste.com')
-
-    cy.get('#open-text-area')
-      .should('be.visible')
-      .type('Teste', { delay: 100 })
-
-    cy.get('.button').should('have.text', 'Enviar').click()
-
-    cy.get('.success').should('be.visible', 'contain.text', 'Mensagem enviada com sucesso.')
+    cy.cadastroComSucesso()
   })
   it('3- Exibe mensagem de erro ao submeter o formulário com um email com formatação inválida', () => {
 
     cy.title().should('eq', 'Central de Atendimento ao Cliente TAT')
 
-    cy.get('#firstName')
-      .should('be.visible')
-      .type('Thiago')
+    cy.fillMandatoryFieldsAndSubmit(primeiroNome, ultimoNome, 'emailFaker', feedbackFaker)
 
-    cy.get('#lastName')
-      .should('be.visible')
-      .type('Andrade')
-
-    cy.get('#email')
-      .should('be.visible')
-      .type('emailcomerrodeformatacao')
-
-    cy.get('#open-text-area')
-      .should('be.visible')
-      .type('Teste')
-
-    cy.get('.button').should('be.visible', 'have.text', 'Enviar').click()
-
-    cy.get('.error > strong').should('be.visible', 'have.text', 'Valide os campos obrigatórios!')
+    cy.cadastroSemsucesso()
 
     cy.get('#email')
       .should('be.visible')
       .focus().type('{selectall}{del}')
-      .type('thiago@teste.com');
+      .type(emailFaker);
 
-    cy.get('.button').should('have.text', 'Enviar').click()
-
-    cy.get('.success').should('be.visible', 'contain.text', 'Mensagem enviada com sucesso.')
+    cy.cadastroComSucesso()
 
   })
   it('4- Verificar se o campo telefone não aceita caracteres alfanumerico', () => {
 
     cy.title().should('eq', 'Central de Atendimento ao Cliente TAT')
 
-    cy.get('#phone').should('be.visible', 'have.value', '')
+    cy.get('#phone')
+      .should('be.visible')
+      .and('have.value', '')
 
     cy.get('#phone')
       .should('be.visible')
@@ -78,28 +62,13 @@ describe('Central de Atendimento ao Cliente TAT', () => {
 
     cy.get('#phone')
       .should('be.visible')
-      .type('988201873')
-      .should('be.visible', 'have.value', '988201873')
+      .type(telefoneFaker)
+      .should('be.visible', 'have.value', telefoneFaker)
 
   })
   it('5- Exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário', () => {
 
-    cy.get('#firstName')
-      .should('be.visible')
-      .type('Thiago')
-
-    cy.get('#lastName')
-      .should('be.visible')
-      .type('Andrade')
-
-    cy.get('#email')
-      .should('be.visible')
-      .focus().type('{selectall}{del}')
-      .type('thiago@teste.com');
-
-    cy.get('#open-text-area')
-      .should('be.visible')
-      .type('Teste')
+    cy.fillMandatoryFieldsAndSubmit(primeiroNome, ultimoNome, emailFaker, feedbackFaker)
 
     cy.get('[for="phone-checkbox"]')
       .should('be.visible')
@@ -108,37 +77,19 @@ describe('Central de Atendimento ao Cliente TAT', () => {
     cy.get('.phone-label-span')
       .should('be.visible', 'have.contain', 'obrigatório')
 
-    cy.get('.button').should('have.text', 'Enviar').click()
-
-    cy.get('.error > strong').should('be.visible', 'have.text', 'Valide os campos obrigatórios!')
+    cy.cadastroSemsucesso()
 
     cy.get('#phone')
       .should('be.visible')
       .type('988201873')
-      .should('be.visible', 'have.value', '988201873')
+      .should('be.visible', 'have.value', telefoneFaker)
 
-    cy.get('.button').should('have.text', 'Enviar').click()
-
-    cy.get('.success').should('be.visible', 'contain.text', 'Mensagem enviada com sucesso.')
+    cy.cadastroComSucesso()
 
   })
   it('6- Preenche e limpa os campos nome, sobrenome, email e telefone ', () => {
 
-    cy.get('#firstName')
-      .should('be.visible')
-      .type('Thiago'),
-
-      cy.get('#lastName')
-        .should('be.visible')
-        .type('Andrade')
-
-    cy.get('#email')
-      .should('be.visible')
-      .type('thiago@teste.com')
-
-    cy.get('#open-text-area')
-      .should('be.visible')
-      .type('Teste')
+    cy.fillMandatoryFieldsAndSubmit(primeiroNome, ultimoNome, emailFaker, feedbackFaker)
 
     cy.get('#firstName')
       .should('be.visible')
@@ -156,29 +107,18 @@ describe('Central de Atendimento ao Cliente TAT', () => {
       .should('be.visible')
       .clear().should('have.value', '')
 
-    cy.get('.button').should('have.text', 'Enviar').click()
+    cy.cadastroSemsucesso()
 
-    cy.get('.error > strong').should('be.visible', 'have.text', 'Valide os campos obrigatórios!')
+    cy.fillMandatoryFieldsAndSubmit(primeiroNome, ultimoNome, emailFaker, feedbackFaker)
 
-    cy.get('#firstName')
-      .should('be.visible')
-      .type('Thiago')
+    cy.cadastroComSucesso()
 
-    cy.get('#lastName')
-      .should('be.visible')
-      .type('Andrade')
+  })
+  it('7- exibe mensagem de erro ao submeter o formulário sem preencher os campos obrigatórios', () => {
+    cy.cadastroSemsucesso()
 
-    cy.get('#email')
-      .should('be.visible')
-      .type('thiago@teste.com')
+    cy.fillMandatoryFieldsAndSubmit(primeiroNome, ultimoNome, emailFaker, feedbackFaker)
 
-    cy.get('#open-text-area')
-      .should('be.visible')
-      .type('Teste')
-
-    cy.get('.button').should('have.text', 'Enviar').click()
-
-    cy.get('.success').should('be.visible', 'contain.text', 'Mensagem enviada com sucesso.')
-
+    cy.cadastroComSucesso()
   })
 })
