@@ -39,7 +39,7 @@ npm install cypress@13.12.0 --save-dev
 
 ## 1.4 Abrindo o Cypress
 
-Após a instalação, abra a interface gráfica com:
+Após a instalação, abra a interface gráfica dentro da pasta do projeto com o comando:
 
 ```bash
 npx cypress open
@@ -249,6 +249,27 @@ Ajuda a evitar conflitos de versão e manter o ambiente de testes estável.
 | package-lock.json         | Garante instalação consistente das dependências.         |
 
 ---
+
+### 📌 **Observação**: Caso os arquivos descritos acima não sejam exibidos:
+### Inicializando o projeto com npm e instalando o Cypress
+
+Antes de começar a utilizar o Cypress, é necessário garantir que seu projeto esteja inicializado com o `npm` e que o Cypress esteja instalado como uma dependência de desenvolvimento.
+
+#### Inicialize seu projeto com `npm` (caso ainda não tenha feito):
+
+Abra o terminal na raiz do seu projeto e execute:
+```bash
+npm init -y
+```
+Instale o Cypress como dependência de desenvolvimento:
+```bash
+npm install cypress --save-dev
+```
+Agora, abra o Cypress com:
+```bash
+npx cypress open
+```
+
 
 # Capítulo 6 – Visão Geral da Tela: Interface Principal do Cypress
 A imagem mostra a interface do Cypress logo após a escolha do navegador, onde podemos:
