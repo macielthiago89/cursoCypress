@@ -121,4 +121,51 @@ describe('Central de Atendimento ao Cliente TAT', () => {
 
     cy.cadastroComSucesso()
   })
+  it('8- Seleciona um produto (YouTube) por seu texto', () => {
+
+    cy.fillMandatoryFieldsAndSubmit(primeiroNome, ultimoNome, emailFaker, feedbackFaker)
+
+    cy.get('#product').select('YouTube').should('have.value', 'youtube')
+
+    cy.cadastroComSucesso()
+
+  })
+  it('9- Seleciona um produto (Mentoria) por seu valor (value)', () => {
+
+    cy.fillMandatoryFieldsAndSubmit(primeiroNome, ultimoNome, emailFaker, feedbackFaker)
+
+    cy.get('#product').select('mentoria').should('have.value', 'mentoria')
+
+    cy.cadastroComSucesso()
+
+  })
+  it('10- Seleciona um produto (Blog) por seu índice', () => {
+    cy.fillMandatoryFieldsAndSubmit(primeiroNome, ultimoNome, emailFaker, feedbackFaker)
+
+    cy.get('#product').select(1).should('have.value', 'blog')
+
+    cy.cadastroComSucesso()
+  })
+  it('11- Marca o tipo de atendimento "Feedback"', () => {
+    cy.fillMandatoryFieldsAndSubmit(primeiroNome, ultimoNome, emailFaker, feedbackFaker)
+
+    cy.get('input[type="radio"][value="feedback"]')
+      .check()
+      .should('be.checked')
+
+    cy.cadastroComSucesso()
+  })
+  it('12- Marca cada tipo de atendimento', () => {
+    cy.get('input[type="radio"]')
+      .each(tipoDeAtendimento => {
+        cy.wrap(tipoDeAtendimento)
+          .check()
+          .should('be.checked')
+      })
+
+    cy.fillMandatoryFieldsAndSubmit(primeiroNome, ultimoNome, emailFaker, feedbackFaker)
+
+    cy.cadastroComSucesso()
+  })
 })
+
